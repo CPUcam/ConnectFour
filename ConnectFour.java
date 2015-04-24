@@ -27,9 +27,10 @@ public class ConnectFour {
     	int turnCount = 0;
     	while (win) {
     		turnCount++;
-    		int choice = turnHeader(in, turnCount, p1, p2);
-    		board(board, choice, turnCount, p1, p2);
+            int p1Choice = play(in, p1, board);
     		printBoard(board);
+            int p2Choice = play(in, p2, board);
+            printBoard(board);
 
     	}
     }
@@ -73,30 +74,44 @@ public class ConnectFour {
     	}
     	return column - 1;
     }
-    public static char[][] board(char[][] b, int choice, int count, String p1, String p2) {
-    	int errCount = 0;
-    	for (int i = 5; i >= 0; i--) {
-    		if (b[i][choice] == '.' && count % 2 != 0) {
-    			b[i][choice] = 'r';
-    			errCount++;
-    		}
-    		else if (b[i][choice] == '.' && count % 2 == 0) {
-    			b[i][choice] = 'b';
-    			errCount++;
-    		}
-    		if (errCount == 1) break;
-    	}
-    	if (errCount == 0 && count % 2 != 0) {
-    		System.out.println("Column " + (choice + 1) + " is full.");
-    		System.out.println(p1 + " , enter the column to drop your checker: ");
-    	}
-    	else if (errCount == 0 && count % 2 == 0) {
-    		System.out.println("Column " + (choice + 1) + " is full.");
-    		System.out.println(p2 + " , enter the column to drop your checker: ");
-    	}
-    	return b;
+    //player move
+    public static int play(Scanner K, String p, char[][] array) {
+        System.out.println(p + " it is your turn.");
+        System.out.println("Your pieces are the r's");
+        System.out.print(p + ", enter the column to drop your checker: ");
+        boolean valid = true;
+        int entry = 0;
+        while (valid) {
+            if (!K.hasNextInt()) {
+                System.out.println(K.next() + " is not an integer.");
+                System.out.print(p + ", enter the column to drop your checker: ");
+            } else {
+                entry = K.nextInt();
+                if (entry < 1 || entry > 7) {
+                    System.out.println(entry + " is not a valid column.");
+                    System.out.print(p + ", enter the column to drop your checker: ");
+                } else {
+                    for (int i = 5; i >= 0; i--) {
+                        if (array[i][entry - 1] == '.') {
+                            array[i][entry - 1] = 'b';
+                            valid = false;
+                            i = -1;
+                        }
+                    }
+                    if (array[0][entry - 1] != '.') {
+                        System.out.println("Column " + entry + " is full");
+                        System.out.print(p + ", enter the column to drop your checker: ");
+                    }
+                }
+                System.out.println();
+            }
+        }
+        return entry - 1;
     }
     public static void printBoard(char[][] b) {
+        System.out.println();
+        System.out.println("Current Board");
+        System.out.println("1 2 3 4 5 6 7 column numbers");
     	for (int i = 0; i < 6; i++) {
     		for (int j = 0; j < 7; j++) {
     			System.out.print(b[i][j]);
@@ -104,5 +119,13 @@ public class ConnectFour {
     		}
     		System.out.println();
     	}
+    }
+    public static boolean win (int choice, char[][] b) {
+        int rCount = 0;
+        for (int i = 0; i < 6; i++) {
+            if (b[i][choice] == 'r') {
+                rCount++;
+            }
+        }
     }
 }
