@@ -7,8 +7,8 @@
  *
  *  email address: rcamacho96@gmail.com
  *  UTEID: rac3983
- *  Section 5 digit ID:
- *  Grader name:
+ *  Section 5 digit ID: 51705
+ *  Grader name: Basil
  *  Number of slip days used on this assignment: 1
  */
 
@@ -38,20 +38,24 @@ public class ConnectFour {
             printBoard(board, win, turnCount, p1, p2);
     	}
     }
+    //returns first player's name as string
     public static String p1Name(Scanner in) {
     	System.out.print("Player 1 enter your name: ");
     	String p1 = in.next();
     	return p1;
     }
+    //returns second player's name as string
     public static String p2Name(Scanner in) {
     	System.out.print("Player 2 enter your name: ");
     	String p2 = in.next();
     	return p2;
     }
+    //first board header
     public static void boardHeader() {
         System.out.println("\nCurrent Board");
         System.out.println("1 2 3 4 5 6 7 column numbers");
     }
+    //prints first board
     public static void printInitialBoard(char[][] b) {
     	for (int i = 0; i < 6; i++) {
     		for (int j = 0; j < 7; j++) {
@@ -70,19 +74,23 @@ public class ConnectFour {
         boolean valid = true;
         int entry = 0;
         while (valid) {
+            //checks for int value
             if (!K.hasNextInt()) {
                 System.out.println(K.next() + " is not an integer.");
                 System.out.print(p + ", enter the column to drop your checker: ");
             } else {
                 entry = K.nextInt();
+                //checks for valid int value
                 if (entry < 1 || entry > 7) {
                     System.out.println(entry + " is not a valid column.");
                     System.out.print(p + ", enter the column to drop your checker: ");
                 } 
+                //checks for full columns
                 else if (array[0][entry - 1] != '.') {
                     System.out.println("Column " + entry + " is full");
                     System.out.print(p + ", enter the column to drop your checker: ");
                 }
+                //replaces '.' with player's checker
                 else {
                     for (int i = 5; i >= 0; i--) {
                         if (array[i][entry - 1] == '.') {
@@ -97,6 +105,7 @@ public class ConnectFour {
         }
         return entry - 1;
     }
+    //prints current board
     public static void printBoard(char[][] b, boolean win, int count, String p1, String p2) {
         if (!win) {
             System.out.println();
@@ -121,7 +130,9 @@ public class ConnectFour {
     		System.out.println();
     	}
     }
+    //checks for win, returns boolean
     public static boolean win (int choice, char[][] b, char r) {
+        //checks is board is full
         int fillCount = 0;
         boolean win = false;
         for (int i = 0; i < 6; i++) {
