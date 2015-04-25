@@ -9,7 +9,7 @@
  *  UTEID: rac3983
  *  Section 5 digit ID:
  *  Grader name:
- *  Number of slip days used on this assignment: 0
+ *  Number of slip days used on this assignment: 1
  */
 
 import java.util.Arrays;
@@ -23,15 +23,19 @@ public class ConnectFour {
        	char[][] board = new char[6][7];
     	boardHeader();
     	printInitialBoard(board);
-    	boolean win = true;
-    	int turnCount = 0;
-    	while (win) {
-    		turnCount++;
-            int p1Choice = play(in, p1, board);
-    		printBoard(board);
-            int p2Choice = play(in, p2, board);
-            printBoard(board);
-
+    	boolean win = false;
+    	int turnCount = 1;
+        char char1 = 'r';
+        char char2 = 'b';
+    	while (!win) {
+            int p1Choice = play(in, p1, board, char1);
+            win = win(p1Choice, board, char1);
+    		printBoard(board, win, turnCount, p1, p2);
+            if (win) break;
+            turnCount++;
+            int p2Choice = play(in, p2, board, char2);
+            win = win(p2Choice, board, char2);
+            printBoard(board, win, turnCount, p1, p2);
     	}
     }
     public static String p1Name(Scanner in) {
@@ -44,6 +48,10 @@ public class ConnectFour {
     	String p2 = in.next();
     	return p2;
     }
+    public static void boardHeader() {
+        System.out.println("\nCurrent Board");
+        System.out.println("1 2 3 4 5 6 7 column numbers");
+    }
     public static void printInitialBoard(char[][] b) {
     	for (int i = 0; i < 6; i++) {
     		for (int j = 0; j < 7; j++) {
@@ -54,30 +62,10 @@ public class ConnectFour {
     		System.out.println();
     	}
     }
-    public static void boardHeader() {
-    	System.out.println("\nCurrent Board");
-    	System.out.println("1 2 3 4 5 6 7 column numbers");
-    }
-    public static int turnHeader(Scanner in, int count, String p1, String p2) {
-    	int column = 0;
-    	if (count % 2 != 0) {
-    		System.out.println("\n" + p1 + " it is your turn.");
-    		System.out.println("Your pieces are the r's.");
-    		System.out.print(p1 + " , enter the column to drop your checker: ");
-    		column = in.nextInt();
-    	}
-    	else {
-    		System.out.println("\n" + p2 + " it is your turn.");
-    		System.out.println("Your pieces are the b's.");
-    		System.out.print(p2 + " , enter the column to drop your checker: ");
-    		column = in.nextInt();
-    	}
-    	return column - 1;
-    }
     //player move
-    public static int play(Scanner K, String p, char[][] array) {
+    public static int play(Scanner K, String p, char[][] array, char r) {
         System.out.println(p + " it is your turn.");
-        System.out.println("Your pieces are the r's");
+        System.out.println("Your pieces are the " + r + "'s");
         System.out.print(p + ", enter the column to drop your checker: ");
         boolean valid = true;
         int entry = 0;
@@ -90,27 +78,40 @@ public class ConnectFour {
                 if (entry < 1 || entry > 7) {
                     System.out.println(entry + " is not a valid column.");
                     System.out.print(p + ", enter the column to drop your checker: ");
-                } else {
+                } 
+                else if (array[0][entry - 1] != '.') {
+                    System.out.println("Column " + entry + " is full");
+                    System.out.print(p + ", enter the column to drop your checker: ");
+                }
+                else {
                     for (int i = 5; i >= 0; i--) {
                         if (array[i][entry - 1] == '.') {
-                            array[i][entry - 1] = 'b';
+                            array[i][entry - 1] = r;
                             valid = false;
                             i = -1;
                         }
                     }
-                    if (array[0][entry - 1] != '.') {
-                        System.out.println("Column " + entry + " is full");
-                        System.out.print(p + ", enter the column to drop your checker: ");
-                    }
+                    
                 }
-                System.out.println();
             }
         }
         return entry - 1;
     }
-    public static void printBoard(char[][] b) {
-        System.out.println();
-        System.out.println("Current Board");
+    public static void printBoard(char[][] b, boolean win, int count, String p1, String p2) {
+        if (!win) {
+            System.out.println();
+            System.out.println("Current Board");
+        }
+        else {
+            if (count % 2 != 0) {
+                System.out.println(p1 + " wins!!");
+            }
+            else {
+                System.out.println(p2 + " wins!!");
+            }
+            System.out.println();
+            System.out.println("Final Board");
+        }
         System.out.println("1 2 3 4 5 6 7 column numbers");
     	for (int i = 0; i < 6; i++) {
     		for (int j = 0; j < 7; j++) {
@@ -120,12 +121,59 @@ public class ConnectFour {
     		System.out.println();
     	}
     }
-    public static boolean win (int choice, char[][] b) {
-        int rCount = 0;
+    public static boolean win (int choice, char[][] b, char r) {
+        int fillCount = 0;
+        boolean win = false;
         for (int i = 0; i < 6; i++) {
-            if (b[i][choice] == 'r') {
-                rCount++;
+            for (int j = 0; j < 7; j++) {
+                if (b[i][j] != '.') {
+                    fillCount++;
+                }
             }
         }
+        if (fillCount == 42)
+            win = true;   
+        else if (fillCount != 42) {
+            //check vertical line
+            for (int i = 0; i < 3; i++) {
+                if ((b[i][choice] == r) && (b[i][choice] == b[i+1][choice]) 
+                    && (b[i][choice] == b[i+2][choice]) && (b[i][choice] == b[i+3][choice])) {
+                    win = true;
+                }
+            }
+            //check horizontal line
+            for (int i = 0; i < 6; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if ((b[i][j] == r) && (b[i][j] == b[i][j+1]) 
+                        && (b[i][j] == b[i][j+2]) && (b[i][j] == b[i][j+3])) {
+                        win = true;
+                    }
+                }
+            }
+            //check down and left line
+            for (int i = 0; i < 3; i++) {
+                for (int j = 3; j < 7; j++) {
+                    if ((b[i][j] == r) && (b[i][j] == b[i+1][j-1]) 
+                        && (b[i][j] == b[i+2][j-2]) && (b[i][j] == b[i+3][j-3])) {
+                        win = true;
+                    } 
+                }
+            }
+            //check down and right line
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 4; j++) {
+                    if ((b[i][j] == r) && (b[i][j] == b[i+1][j+1]) 
+                        && (b[i][j] == b[i+2][j+2]) && (b[i][j] == b[i+3][j+3])) {
+                        win = true;
+                    }
+                }
+            }
+        }
+        fillCount = 0;
+        return win;
     }
 }
+
+
+
+
