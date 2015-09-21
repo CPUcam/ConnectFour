@@ -1,15 +1,5 @@
 /*
- * CS312 Assignment 10
- * A program to play Connect Four.
- *
- * On my honor this program is my own work:
- * Raul Camacho
- *
- *  email address: rcamacho96@gmail.com
- *  UTEID: rac3983
- *  Section 5 digit ID: 51705
- *  Grader name: Basil
- *  Number of slip days used on this assignment: 1
+Terminal program that allows two players to play the popular game Connect 4.
  */
 
 import java.util.Arrays;
